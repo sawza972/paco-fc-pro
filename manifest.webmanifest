@@ -1,0 +1,9 @@
+{
+  "name": "PACO FC PRO",
+  "short_name": "PACO FC PRO",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0d0f12",
+  "theme_color": "#101114",
+  "description": "Compagnon indépendant Ultimate Team FC 27"
+}

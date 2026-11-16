@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101114"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<title>PACO FC PRO</title>
+<style>
+:root{--bg:#0d0f12;--panel:#171a20;--panel2:#20242c;--gold:#e5c46b;--muted:#9da3ae;--line:#2c313b;--green:#55d69e;--red:#ff7777}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#34301e 0,transparent 36%),var(--bg);color:#f4f4f2;font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:24px max(18px,calc((100vw - 1120px)/2));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:22px;font-weight:900;letter-spacing:1.5px;color:var(--gold)}.sub{font-size:10px;color:var(--muted);letter-spacing:2px}
+.wrap{max-width:1120px;margin:auto;padding:22px 18px 70px}.top{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:20px}.tag{border:1px solid #65562e;color:var(--gold);border-radius:99px;padding:6px 10px;font-size:12px}
+h1{font-size:clamp(25px,5vw,38px);margin:4px 0}h2{font-size:18px;margin:0 0 14px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:17px;min-width:0}.metric{font-size:25px;font-weight:800;color:var(--gold);margin:8px 0 2px}.small{font-size:12px;color:var(--muted)}
+nav{display:flex;gap:8px;overflow:auto;padding:3px 0 16px;margin-bottom:8px}nav button{white-space:nowrap;background:var(--panel);border:1px solid var(--line);color:#ddd;border-radius:10px;padding:10px 14px}nav button.active{background:#3a3220;border-color:#8e7639;color:var(--gold)}
+section{display:none}section.active{display:block}.cols{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;background:#0f1217;border:1px solid #3a414d;border-radius:9px;color:white;padding:12px;font:inherit}
+button.primary{background:var(--gold);color:#17140b;font-weight:800;border:0;border-radius:10px;padding:12px 16px;cursor:pointer}button.secondary{background:#292e37;color:#eee;border:1px solid var(--line);border-radius:10px;padding:10px 13px;cursor:pointer}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.positive{color:var(--green)}.negative{color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:11px 7px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
+.note{border-left:3px solid var(--gold);padding:10px 12px;background:#242117;border-radius:0 9px 9px 0;color:#e8dfc5;font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.empty{padding:20px;text-align:center;color:var(--muted)}
+footer{margin-top:24px;color:#777f8b;font-size:11px;line-height:1.5}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.top{align-items:start;flex-direction:column}header{padding:18px}.wrap{padding:18px 13px 55px}.metric{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">PACO FC PRO</div><div class="sub">ULTIMATE TEAM INTELLIGENCE</div></div><span class="tag">FC 27 · CONSOLE</span></header>
+<main class="wrap">
+<div class="top"><div><div class="sub">TON CENTRE DE CONTRÔLE</div><h1>Trading & Club</h1><div class="muted">PlayStation / Xbox · Risque modéré · Capital non plafonné</div></div><span class="tag">VERSION 1.0 · BÊTA</span></div>
+<nav>
+<button class="active" data-tab="home">Vue générale</button><button data-tab="trade">Calculateur trading</button><button data-tab="watch">Ma watchlist</button><button data-tab="settings">Paramètres</button>
+</nav>
+<section id="home" class="active">
+<div class="grid">
+<div class="card"><div class="small">Capital disponible</div><div class="metric">Illimité</div><div class="small">Budget non plafonné</div></div>
+<div class="card"><div class="small">Risque choisi</div><div class="metric">Modéré</div><div class="small">Contrôle du risque activé</div></div>
+<div class="card"><div class="small">Opportunités suivies</div><div class="metric" id="count">0</div><div class="small">Dans ta watchlist</div></div>
+<div class="card"><div class="small">Potentiel estimé</div><div class="metric" id="potential">—</div><div class="small">Sur les fiches renseignées</div></div>
+</div>
+<div class="cols" style="margin-top:14px">
+<div class="card"><h2>Assistant trading</h2><p>Le moteur calcule la marge nette après taxe de vente de 5 %, le rendement et un indicateur de risque à partir des prix que tu saisis.</p><div class="note">Conseil modéré : privilégie les marges nettes positives, la liquidité et les achats progressifs. Aucun achat automatique n'est effectué.</div><div class="actions" style="margin-top:15px"><button class="primary" onclick="showTab('trade')">Analyser une carte</button><button class="secondary" onclick="showTab('watch')">Voir ma watchlist</button></div></div>
+<div class="card"><h2>Règles du moteur</h2><p class="small">Plateforme : PlayStation / Xbox</p><p class="small">Taxe de vente prise en compte : 5 %</p><p class="small">Alerte : marge nette négative ou faible</p><p class="small">Risque : modéré (exposition recommandée par opération limitée)</p></div>
+</div>
+</section>
+<section id="trade">
+<div class="cols">
+<div class="card"><h2>Calculer une opportunité</h2>
+<div class="field"><label>Nom du joueur / carte</label><input id="player" placeholder="Ex. Kylian Mbappé"></div>
+<div class="field"><label>Prix d'achat (crédits)</label><input id="buy" type="number" min="0" placeholder="Ex. 125000"></div>
+<div class="field"><label>Prix de revente visé (crédits)</label><input id="sell" type="number" min="0" placeholder="Ex. 145000"></div>
+<div class="field"><label>Nombre de cartes</label><input id="qty" type="number" min="1" value="1"></div>
+<button class="primary" onclick="calculate()">Analyser</button>
+</div>
+<div class="card"><h2>Résultat de l'analyse</h2><div id="result" class="empty">Renseigne les prix pour calculer la marge nette.</div></div>
+</div>
+</section>
+<section id="watch">
+<div class="card"><div class="row"><h2>Ma watchlist</h2><button class="secondary" onclick="clearWatch()">Vider</button></div><div id="watchlist" class="empty">Aucune carte suivie pour le moment.</div></div>
+</section>
+<section id="settings">
+<div class="card"><h2>Configuration</h2><div class="field"><label>Plateforme</label><input value="PlayStation / Xbox" disabled></div><div class="field"><label>Budget</label><input value="Illimité (non plafonné)" disabled></div><div class="field"><label>Profil de risque</label><input value="Modéré" disabled></div><div class="field"><label>Taxe de vente FUT</label><input value="5 %" disabled></div><div class="note">Les paramètres de départ sont enregistrés pour cette version. La synchronisation de données en direct sera ajoutée uniquement via une source compatible et autorisée.</div></div>
+</section>
+<footer>PACO FC PRO est un outil indépendant non affilié à EA SPORTS. Les prix sont saisis manuellement dans cette version de démonstration : aucune connexion au marché en direct n'est encore active. Vérifie toujours les prix en jeu avant toute décision.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id); let watch=JSON.parse(localStorage.getItem('pacoWatch')||'[]');
+function showTab(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id))}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' crédits'}
+function calculate(){let name=$('player').value.trim()||'Carte sans nom',buy=Number($('buy').value),sell=Number($('sell').value),qty=Math.max(1,Number($('qty').value)||1);if(!(buy>0&&sell>0)){ $('result').innerHTML='<span class="negative">Saisis un prix d’achat et un prix de revente valides.</span>';return}
+let gross=sell-buy,net=sell*.95-buy,profit=net*qty,roi=net/buy*100,breakEven=buy/.95;
+let rating=net<=0?'À éviter':roi<5?'Faible':roi<12?'À surveiller':'Intéressant';
+let cls=net>0?'positive':'negative';
+$('result').innerHTML=`<div class="small">ÉVALUATION · ${rating.toUpperCase()}</div><div class="metric ${cls}">${fmt(profit)}</div><p class="small">Bénéfice net estimé pour ${qty} carte(s)</p><table><tr><td>Prix de revente après taxe</td><td>${fmt(sell*.95)}</td></tr><tr><td>Marge nette / carte</td><td class="${cls}">${fmt(net)}</td></tr><tr><td>Rendement net</td><td>${roi.toFixed(2).replace('.',',')} %</td></tr><tr><td>Prix minimum de revente</td><td>${fmt(breakEven)}</td></tr></table><div class="actions" style="margin-top:14px"><button class="primary" onclick="addWatch('${encodeURIComponent(name)}',${buy},${sell},${qty})">Ajouter à ma watchlist</button></div>`;
+}
+function addWatch(name,buy,sell,qty){watch.unshift({name:decodeURIComponent(name),buy,sell,qty,at:Date.now()});watch=watch.slice(0,50);save();render();showTab('watch')}
+function save(){localStorage.setItem('pacoWatch',JSON.stringify(watch))}
+function render(){ $('count').textContent=watch.length;let p=watch.reduce((s,x)=>s+(x.sell*.95-x.buy)*x.qty,0);$('potential').textContent=watch.length?fmt(p):'—';if(!watch.length){$('watchlist').innerHTML='Aucune carte suivie pour le moment.';return}
+$('watchlist').innerHTML='<table><thead><tr><th>Carte</th><th>Achat</th><th>Revente</th><th>Net estimé</th><th></th></tr></thead><tbody>'+watch.map((x,i)=>`<tr><td>${escapeHtml(x.name)}</td><td>${fmt(x.buy)}</td><td>${fmt(x.sell)}</td><td class="${x.sell*.95-x.buy>0?'positive':'negative'}">${fmt((x.sell*.95-x.buy)*x.qty)}</td><td><button class="secondary" onclick="removeWatch(${i})">×</button></td></tr>`).join('')+'</tbody></table>'}
+function removeWatch(i){watch.splice(i,1);save();render()}function clearWatch(){if(confirm('Vider toute la watchlist ?')){watch=[];save();render()}}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
