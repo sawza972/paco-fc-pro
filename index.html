@@ -28,7 +28,7 @@ footer{margin-top:24px;color:#777f8b;font-size:11px;line-height:1.5}
 <main class="wrap">
 <div class="top"><div><div class="sub">TON CENTRE DE CONTRÔLE</div><h1>Trading & Club</h1><div class="muted">PlayStation / Xbox · Risque modéré · Capital non plafonné</div></div><span class="tag">VERSION 1.0 · BÊTA</span></div>
 <nav>
-<button class="active" data-tab="home">Vue générale</button><button data-tab="trade">Calculateur trading</button><button data-tab="watch">Ma watchlist</button><button data-tab="settings">Paramètres</button>
+<button class="active" data-tab="home">Vue générale</button><button data-tab="trade">Calculateur trading</button><button data-tab="watch">Ma watchlist</button><button data-tab="settings">Paramètres</button><button data-tab="connect">Connexion & import</button>
 </nav>
 <section id="home" class="active">
 <div class="grid">
@@ -60,6 +60,30 @@ footer{margin-top:24px;color:#777f8b;font-size:11px;line-height:1.5}
 <section id="settings">
 <div class="card"><h2>Configuration</h2><div class="field"><label>Plateforme</label><input value="PlayStation / Xbox" disabled></div><div class="field"><label>Budget</label><input value="Illimité (non plafonné)" disabled></div><div class="field"><label>Profil de risque</label><input value="Modéré" disabled></div><div class="field"><label>Taxe de vente FUT</label><input value="5 %" disabled></div><div class="note">Les paramètres de départ sont enregistrés pour cette version. La synchronisation de données en direct sera ajoutée uniquement via une source compatible et autorisée.</div></div>
 </section>
+
+<section id="connect">
+<div class="cols">
+<div class="card"><h2>Services EA officiels</h2>
+<p class="muted">PACO FC PRO ne collecte jamais ton mot de passe EA.</p>
+<div class="field"><label>Application EA SPORTS FC 27 Companion</label><a class="primary" style="display:block;text-align:center;text-decoration:none" href="https://apps.apple.com/fr/app/ea-sports-fc-27-companion/id1127108818" target="_blank" rel="noopener">Ouvrir l’App Store</a></div>
+<div class="field"><label>EA SPORTS FC 27 Web App</label><a class="secondary" style="display:block;text-align:center;text-decoration:none" href="https://www.ea.com/ea-sports-fc/ultimate-team/web-app" target="_blank" rel="noopener">Ouvrir EA Web App</a></div>
+<div class="note">Les services EA s’ouvrent séparément. PACO ne peut pas intégrer ou piloter l’application Companion dans sa propre fenêtre.</div>
+</div>
+<div class="card"><h2>Partenaires EA autorisés</h2>
+<p>EA autorise actuellement la connexion Community API sur FUTBIN, FUT.GG et FUTWIZ. Connecte-toi uniquement sur leurs propres sites via leur flux sécurisé EA.</p>
+<div class="actions"><a class="secondary" href="https://www.fut.gg/gg-club/" target="_blank" rel="noopener">FUT.GG</a><a class="secondary" href="https://www.futbin.com/" target="_blank" rel="noopener">FUTBIN</a><a class="secondary" href="https://www.futwiz.com/" target="_blank" rel="noopener">FUTWIZ</a></div>
+<p class="small" style="margin-top:12px">La connexion à un partenaire ne connecte pas PACO FC PRO. Nous ne pouvons pas réutiliser sa session ou ses données privées sans autorisation et interface officielle.</p>
+</div></div>
+<div class="card" style="margin-top:14px"><h2>Importer les données de ton club</h2>
+<p class="muted">Import local CSV ou JSON depuis une source qui autorise explicitement cet export. Le fichier est traité dans ton navigateur.</p>
+<div class="field"><label>Fichier CSV ou JSON</label><input id="clubFile" type="file" accept=".csv,.json,application/json,text/csv"></div>
+<div class="actions"><button class="primary" onclick="importClub()">Importer</button><button class="secondary" onclick="clearClub()">Effacer l’import</button></div>
+<div id="importStatus" class="note" style="margin-top:12px">Aucun fichier importé.</div><div id="clubPreview" style="margin-top:12px"></div>
+</div>
+<div class="card" style="margin-top:14px"><h2>Intégration future, si EA l’autorise</h2>
+<table><tr><td>Joueurs et effectif</td><td>Import/synchronisation autorisée</td></tr><tr><td>Formations et tactiques</td><td>Analyse personnalisée</td></tr><tr><td>DCE et évolutions</td><td>Comparaison avec ton club</td></tr><tr><td>Marché</td><td>Analyse sans transaction automatique</td></tr></table></div>
+</section>
+
 <footer>PACO FC PRO est un outil indépendant non affilié à EA SPORTS. Les prix sont saisis manuellement dans cette version de démonstration : aucune connexion au marché en direct n'est encore active. Vérifie toujours les prix en jeu avant toute décision.</footer>
 </main>
 <script>
@@ -79,6 +103,20 @@ function render(){ $('count').textContent=watch.length;let p=watch.reduce((s,x)=
 $('watchlist').innerHTML='<table><thead><tr><th>Carte</th><th>Achat</th><th>Revente</th><th>Net estimé</th><th></th></tr></thead><tbody>'+watch.map((x,i)=>`<tr><td>${escapeHtml(x.name)}</td><td>${fmt(x.buy)}</td><td>${fmt(x.sell)}</td><td class="${x.sell*.95-x.buy>0?'positive':'negative'}">${fmt((x.sell*.95-x.buy)*x.qty)}</td><td><button class="secondary" onclick="removeWatch(${i})">×</button></td></tr>`).join('')+'</tbody></table>'}
 function removeWatch(i){watch.splice(i,1);save();render()}function clearWatch(){if(confirm('Vider toute la watchlist ?')){watch=[];save();render()}}
 function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function importClub(){
+ const file=$('clubFile').files[0];if(!file){$('importStatus').textContent='Choisis d’abord un fichier CSV ou JSON.';return;}
+ const reader=new FileReader();reader.onload=()=>{try{
+ let rows=[];
+ if(file.name.toLowerCase().endsWith('.json')){const p=JSON.parse(reader.result);rows=Array.isArray(p)?p:(p.players||p.club||p.items||[]);}
+ else{const lines=String(reader.result).split(/\r?\n/).filter(Boolean);const h=lines.shift().split(',').map(x=>x.trim().replace(/^"|"$/g,''));rows=lines.map(line=>{const v=line.split(',');return Object.fromEntries(h.map((k,i)=>[k,(v[i]||'').trim().replace(/^"|"$/g,'')]))});}
+ if(!Array.isArray(rows))throw new Error('Format non reconnu.');
+ localStorage.setItem('pacoClubImport',JSON.stringify(rows));$('importStatus').textContent=`Import local réussi : ${rows.length} entrée(s). Le fichier reste sur cet appareil.`;
+ $('clubPreview').innerHTML=rows.length?`<p class="small">Aperçu :</p><pre style="white-space:pre-wrap;overflow:auto;color:#ddd;background:#0f1217;padding:12px;border-radius:8px">${escapeHtml(JSON.stringify(rows.slice(0,3),null,2))}</pre>`:'Aucune entrée détectée.';
+ }catch(e){$('importStatus').textContent='Import impossible : '+e.message;}};reader.readAsText(file);
+}
+function clearClub(){localStorage.removeItem('pacoClubImport');$('clubFile').value='';$('importStatus').textContent='Import local effacé.';$('clubPreview').innerHTML='';}
+
 render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
