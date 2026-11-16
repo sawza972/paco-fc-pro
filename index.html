@@ -26,9 +26,9 @@ footer{margin-top:24px;color:#777f8b;font-size:11px;line-height:1.5}
 <body>
 <header><div><div class="brand">PACO FC PRO</div><div class="sub">ULTIMATE TEAM INTELLIGENCE</div></div><span class="tag">FC 27 · CONSOLE</span></header>
 <main class="wrap">
-<div class="top"><div><div class="sub">TON CENTRE DE CONTRÔLE</div><h1>Trading & Club</h1><div class="muted">PlayStation / Xbox · Risque modéré · Capital non plafonné</div></div><span class="tag">VERSION 1.0 · BÊTA</span></div>
+<div class="top"><div><div class="sub">TON CENTRE DE CONTRÔLE</div><h1>Trading & Club</h1><div class="muted">PlayStation / Xbox · Risque modéré · Capital non plafonné</div></div><span class="tag">VERSION 3.0 · TEST EA SYNC</span></div>
 <nav>
-<button class="active" data-tab="home">Vue générale</button><button data-tab="trade">Calculateur trading</button><button data-tab="watch">Ma watchlist</button><button data-tab="settings">Paramètres</button><button data-tab="connect">Connexion & import</button>
+<button class="active" data-tab="home">Vue générale</button><button data-tab="trade">Calculateur trading</button><button data-tab="watch">Ma watchlist</button><button data-tab="settings">Paramètres</button><button data-tab="connect">Connexion & import</button><button data-tab="easync">Test EA Sync</button>
 </nav>
 <section id="home" class="active">
 <div class="grid">
@@ -84,6 +84,43 @@ footer{margin-top:24px;color:#777f8b;font-size:11px;line-height:1.5}
 <table><tr><td>Joueurs et effectif</td><td>Import/synchronisation autorisée</td></tr><tr><td>Formations et tactiques</td><td>Analyse personnalisée</td></tr><tr><td>DCE et évolutions</td><td>Comparaison avec ton club</td></tr><tr><td>Marché</td><td>Analyse sans transaction automatique</td></tr></table></div>
 </section>
 
+
+<section id="easync">
+  <div class="card">
+    <div class="row"><h2>EA Companion · Test de connexion</h2><span class="tag">V3 TEST</span></div>
+    <p class="muted">Ce module vérifie l’accès au service EA et prépare le diagnostic. Il ne prétend pas synchroniser le club tant qu’un accès de données EA utilisable par PACO FC PRO n’est pas disponible.</p>
+    <div class="note">Sécurité : la connexion EA s’effectue uniquement sur le site officiel d’EA. Ne saisis jamais ton mot de passe dans PACO FC PRO.</div>
+    <div class="actions" style="margin-top:14px">
+      <a class="primary" style="display:inline-block;text-decoration:none" href="https://www.ea.com/ea-sports-fc/ultimate-team/web-app/" target="_blank" rel="noopener">Ouvrir EA FC 27 Web App ↗</a>
+      <a class="secondary" style="display:inline-block;text-decoration:none" href="https://apps.apple.com/fr/app/ea-sports-fc-companion/id1094930513" target="_blank" rel="noopener">Ouvrir Companion sur l’App Store ↗</a>
+    </div>
+    <div class="field"><label>Après ouverture d’EA, que vois-tu ?</label>
+      <select id="eaLoginResult">
+        <option value="">Choisir un résultat…</option>
+        <option value="club">Mon club et mon équipe Ultimate Team s’affichent</option>
+        <option value="login">EA me demande de me connecter</option>
+        <option value="error">J’ai une erreur ou un accès refusé</option>
+      </select>
+    </div>
+    <button class="primary" onclick="recordEaCheck()">Enregistrer le résultat du test</button>
+    <div id="eaTestStatus" class="note" style="margin-top:12px">Test non effectué.</div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h2>État réel de la synchronisation</h2>
+    <div class="grid">
+      <div><div class="small">Ouverture EA</div><div class="metric" style="font-size:18px">Testable</div></div>
+      <div><div class="small">Connexion EA intégrée à PACO</div><div class="metric" style="font-size:18px">Non active</div></div>
+      <div><div class="small">Lecture automatique du club</div><div class="metric" style="font-size:18px">Non active</div></div>
+      <div><div class="small">Analyse du club synchronisé</div><div class="metric" style="font-size:18px">En attente</div></div>
+    </div>
+    <p class="small" style="margin-top:12px">Le fait d’être connecté à EA dans un autre onglet ou dans l’application Companion ne donne pas automatiquement à PACO FC PRO accès à la session ni aux données du club. Aucun identifiant ni cookie n’est collecté par ce prototype.</p>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h2>Ce qu’il faut pour activer la vraie synchronisation</h2>
+    <p>Il faut un flux d’authentification et une interface de données EA utilisables par PACO FC PRO, avec les autorisations et paramètres côté serveur nécessaires. Cette archive ne contient pas encore ce connecteur : je préfère l’indiquer clairement plutôt que d’afficher une fausse synchronisation.</p>
+  </div>
+</section>
+
 <footer>PACO FC PRO est un outil indépendant non affilié à EA SPORTS. Les prix sont saisis manuellement dans cette version de démonstration : aucune connexion au marché en direct n'est encore active. Vérifie toujours les prix en jeu avant toute décision.</footer>
 </main>
 <script>
@@ -97,7 +134,20 @@ let rating=net<=0?'À éviter':roi<5?'Faible':roi<12?'À surveiller':'Intéressa
 let cls=net>0?'positive':'negative';
 $('result').innerHTML=`<div class="small">ÉVALUATION · ${rating.toUpperCase()}</div><div class="metric ${cls}">${fmt(profit)}</div><p class="small">Bénéfice net estimé pour ${qty} carte(s)</p><table><tr><td>Prix de revente après taxe</td><td>${fmt(sell*.95)}</td></tr><tr><td>Marge nette / carte</td><td class="${cls}">${fmt(net)}</td></tr><tr><td>Rendement net</td><td>${roi.toFixed(2).replace('.',',')} %</td></tr><tr><td>Prix minimum de revente</td><td>${fmt(breakEven)}</td></tr></table><div class="actions" style="margin-top:14px"><button class="primary" onclick="addWatch('${encodeURIComponent(name)}',${buy},${sell},${qty})">Ajouter à ma watchlist</button></div>`;
 }
-function addWatch(name,buy,sell,qty){watch.unshift({name:decodeURIComponent(name),buy,sell,qty,at:Date.now()});watch=watch.slice(0,50);save();render();showTab('watch')}
+function addWatch(name,buy,sell,qty){watch.unshift({name:decodeURIComponent(name),buy,sell,qty,at:Date.now()});watch=watch.slice(0,50);save();
+function recordEaCheck(){
+  const v=$('eaLoginResult').value;
+  const messages={
+    club:"Tu confirmes que le club s’affiche dans EA. L’ouverture de Companion/Web App fonctionne, mais PACO FC PRO n’a pas encore reçu les données du club.",
+    login:"EA demande une connexion. Connecte-toi uniquement sur le site officiel EA, puis reviens enregistrer le résultat.",
+    error:"Un problème d’accès EA a été signalé. Note le message exact pour le diagnostic."
+  };
+  if(!v){$('eaTestStatus').textContent="Sélectionne d’abord le résultat observé dans EA.";return;}
+  $('eaTestStatus').textContent=messages[v];
+  localStorage.setItem('pacoEaTestResult',v);
+}
+
+render();showTab('watch')}
 function save(){localStorage.setItem('pacoWatch',JSON.stringify(watch))}
 function render(){ $('count').textContent=watch.length;let p=watch.reduce((s,x)=>s+(x.sell*.95-x.buy)*x.qty,0);$('potential').textContent=watch.length?fmt(p):'—';if(!watch.length){$('watchlist').innerHTML='Aucune carte suivie pour le moment.';return}
 $('watchlist').innerHTML='<table><thead><tr><th>Carte</th><th>Achat</th><th>Revente</th><th>Net estimé</th><th></th></tr></thead><tbody>'+watch.map((x,i)=>`<tr><td>${escapeHtml(x.name)}</td><td>${fmt(x.buy)}</td><td>${fmt(x.sell)}</td><td class="${x.sell*.95-x.buy>0?'positive':'negative'}">${fmt((x.sell*.95-x.buy)*x.qty)}</td><td><button class="secondary" onclick="removeWatch(${i})">×</button></td></tr>`).join('')+'</tbody></table>'}
